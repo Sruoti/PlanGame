@@ -35,7 +35,7 @@ class BlueBoom(pygame.sprite.Sprite):
     def reset(self):
         self.active = True
         self.rect.left, self.rect.top = \
-              0,0#randint(0, self.width - self.rect.width), randint(-130, -120)
+            randint(0, self.width - self.rect.width), randint(-300, -120)
 
 #左下角显示炸弹数目
 class BoomVisible():
@@ -71,7 +71,7 @@ class YellowBullet(pygame.sprite.Sprite):
     def reset(self):
         self.active = True
         self.rect.left, self.rect.top = \
-            randint(0, self.width - self.rect.width), randint(-300, -100)
+            randint(0, self.width - self.rect.width), randint(-300, -200)
 
 #将普通子弹换成超级子弹
 class RedPackge(pygame.sprite.Sprite):
@@ -99,4 +99,4 @@ class RedPackge(pygame.sprite.Sprite):
     def reset(self):
         self.active = True
         self.rect.left, self.rect.top = \
-              0,0#randint(0, self.width - self.rect.width), randint(-130, -120)
+            randint(0, self.width - self.rect.width), randint(-130, -120)

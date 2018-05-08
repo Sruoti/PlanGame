@@ -31,6 +31,7 @@ class Plane(pygame.sprite.Sprite):
         self.speed = 10
         self.boom_num = 3
         self.active = True
+        self.invincible = False
         self.mask = pygame.mask.from_surface(self.image_up) #检测非透明部分是否碰撞
 
         self.destroy_images = []
@@ -69,4 +70,7 @@ class Plane(pygame.sprite.Sprite):
             self.rect.left = self.width - self.rect.width
 
     def reset(self):
-        pass
+        self.rect.left, self.rect.top = \
+            (self.width - self.rect.width) // 2, (self.height - self.rect.height - 20)
+        self.active = True
+        self.invincible = True

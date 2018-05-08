@@ -37,6 +37,7 @@ plane_image = [myplane_image1,myplane_image2,myplane_image3,myplane_image4]
 plane = myplane.Plane(*plane_image,bg_size)
 
 
+
 #音乐
 music_init = music.Music(r"E:\JetBrains\game music\bgm_cunshiqujinbi.mp3")
 music_fit = music.Music(r"E:\JetBrains\game music\bgm_zhandou1.mp3")
@@ -132,7 +133,17 @@ def main():
     #标志是否暂停游戏
     pause = False
 
+    #游戏难度
     level = 0
+
+    record = False
+
+    # plane生命数量
+    plane_life_num = 3
+    plane_life_image = pygame.image.load(r"E:\JetBrains\image\wsparticle_66.png").convert()
+    plane_life_image.set_colorkey((255, 255, 255))
+    plane_life_image_rect = plane_life_image.get_rect()
+
 
     #得分
     score = 0
@@ -184,9 +195,9 @@ def main():
     # 蓝色补给箱,补充炸弹数目
     boom_group = pygame.sprite.Group()
     blue_boom_group = pygame.sprite.Group()
-    add_boom_blue(blue_boom_group, boom_group, 1,bg_size)
+    add_boom_blue(blue_boom_group, boom_group, 3,bg_size)
 
-    #黄色补给箱，改变普通子弹形态
+    #黄色补给箱，改变普通子弹和超级子弹形态形态
     yellow_bullet = pygame.sprite.Group()
     add_bullet_yellow(yellow_bullet,boom_group,3,bg_size)
 
@@ -203,6 +214,9 @@ def main():
 
     #标志是否使用超级子弹
     is_double_bullet = False
+
+    #无敌时间
+    INVINCIBLE_TIME = USEREVENT + 2
 
     running = True
 
@@ -239,7 +253,9 @@ def main():
             elif event.type == DOUBLE_BULLET_TIME:
                 is_double_bullet = False
                 pygame.time.set_timer(DOUBLE_BULLET_TIME,0)
-
+            elif event.type == INVINCIBLE_TIME:
+                plane.invincible = False
+                pygame.time.set_timer(INVINCIBLE_TIME,0)
 
         #检测键盘操作。如果是频繁的键盘操作，使用这种方式
         key_press = pygame.key.get_pressed()
@@ -284,9 +300,9 @@ def main():
 
         #绘制背景
         #screen.blit(background,(0,0))
-        if not pause:
+        if plane_life_num and not pause:
             screen.blit(background, (0, 0))
-            #每10帧重置一颗子弹的位置,发射子弹
+            #每10帧重置一颗子弹的位置,发射子弹.绘制子弹
             if not(delay % 10):
                 if is_double_bullet:
                     bullets = bullet2
@@ -301,6 +317,7 @@ def main():
             for each in bullets:
                 if each.active:
                     each.move()
+                    #绘制子弹
                     screen.blit(each.image,each.rect)
                     bullet_enemies_collide = pygame.sprite.spritecollide(each,enemies,False,pygame.sprite.collide_mask)
                     if bullet_enemies_collide:
@@ -384,10 +401,13 @@ def main():
 
             #检测我方飞机是否被撞
             me_enemies_collide = pygame.sprite.spritecollide(plane,enemies,False,pygame.sprite.collide_mask)  #检测me是否和enemies这组精灵中的任何一个精灵碰撞,返回enemies中与plane的元素列表
+    #########这个有点6,如果invincible为True,则plane.active始终为True##########
             if me_enemies_collide:
-                plane.active = False
                 for each in me_enemies_collide:
                     each.active = False
+                if not plane.invincible:
+                    plane.active = False
+
 
             #绘制我方飞机
             if plane.active:
@@ -409,9 +429,13 @@ def main():
                     screen.blit(plane.destroy_images[me_destroy_index], plane.rect)
                     me_destroy_index = (me_destroy_index + 1) % len(plane.destroy_images)  # 总共4张图，余4结果只会在0到3之间
                     if me_destroy_index == 0:
-                        #plane.reset()
-                        pass
+                        #if plane_life_num > 0:  在进入主业务的时候已经判断plane_life_num要大于0
+                        plane_life_num -= 1
+                        plane.reset()
+                        pygame.time.set_timer(INVINCIBLE_TIME,3 * 1000)
 
+
+            #绘制补给箱
             for each in boom_group:
                 if each.active:
                     each.move()
@@ -425,21 +449,49 @@ def main():
                                 if plane.boom_num < 3:
                                     plane.boom_num += 1
                                 each.active = False
-                                me_boom_collide.remove(each)
-                            if each in yellow_bullet:
+                            elif each in yellow_bullet:
+                                if bullets == bullet1:
+                                    for ZD1 in bullets:
+                                        ZD1.bullet_image = bullet.Bullet1.bullet_list[randint(0,3)]
+                                if bullets == bullet2:
+                                    for ZD2 in bullets:
+                                        ZD2.bullet_image = bullet.Bullet2.bullet_list[randint(0,3)]
                                 each.active = False
-                                pass
-                            if each in red_supply:
+                            elif each in red_supply:
                                 is_double_bullet = True
                                 pygame.time.set_timer(DOUBLE_BULLET_TIME,15 * 1000)
                                 each.active = False
+                            me_boom_collide.remove(each)
+        elif plane_life_num == 0:
+            #绘制游戏结束画面
+            #背景音乐停止
+            pygame.mixer.music.stop()
 
+            #停止全部音效
+            pygame.mixer.stop()
 
+            #停止发放补给
+            pygame.time.set_timer(SUPPLY_TIME,0)
+
+            if not record:
+                #读取历史最高得分
+
+                #如果高于历史最高得分，则存档aa
+                pass
+            pygame.time.delay(2000)
+            #绘制结束界面
+            pygame.quit()
+            sys.exit()
         #绘制剩余炸弹数目:
         boom_text = font_boom.render("x%d" % plane.boom_num,True,GREEN)
         #boom_text_rect = boom_text.get_rect()
         screen.blit(boom_visible.image,boom_visible.rect)
         screen.blit(boom_text,(43,boom_visible.rect.top))
+
+        #绘制plane剩余生命数量
+        plane_text = font_boom.render("x%d" % plane_life_num, True, GREEN)
+        screen.blit(plane_life_image, (width - plane_life_image_rect.width-60,height-plane_life_image_rect.height-10))
+        screen.blit(plane_text, (width - plane_life_image_rect.width-22,height-plane_life_image_rect.height-10))
 
         #绘制分数
         score_text = font.render(("Score: %s" % str(score)),True,BLUE)

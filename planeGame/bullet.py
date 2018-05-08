@@ -40,15 +40,15 @@ class Bullet1(pygame.sprite.Sprite):
 #超级子弹
 class Bullet2(pygame.sprite.Sprite):
     bullet_image1 = r"E:\JetBrains\image\wsparticle_46.png"
-    bullet_image2 = r"E:\JetBrains\image\wsparticle_68.png"
-    bullet_image3 = r"E:\JetBrains\image\wsparticle_dasheng010.png"
-    bullet_image4 = r"E:\JetBrains\image\wsparticle_chengsejiguang.png"
+    bullet_image2 = r"E:\JetBrains\image\wsparticle_jjwns_jt1.png"
+    bullet_image3 = "E:\JetBrains\image\wsparticle_xiaojianjian1.png"
+    bullet_image4 = r"E:\JetBrains\image\wsparticle_hong18_02.png"
     bullet_list = []
     bullet_list.extend([bullet_image1, bullet_image2, bullet_image3, bullet_image4])
 
     def __init__(self,position):
         pygame.sprite.Sprite.__init__(self)
-        self.bullet_image = Bullet1.bullet_list[0]
+        self.bullet_image = Bullet2.bullet_list[0]
         self.image = pygame.image.load(self.bullet_image).convert()
         self.rect = self.image.get_rect()
         self.rect.left,self.rect.top = position
