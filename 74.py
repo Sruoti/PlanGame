@@ -293,12 +293,12 @@ def main():
     BLUE = (0, 0, 255)
     PINK = (255.99609375, 0.0, 255.99609375)
     COLOR = [BLACK, GREEN, RED, BLUE, PINK]
-
+    #ball_image = r"E:\JetBrains\game image\wsparticle_12zhibaiyang.ccbi"
     ball_image = "C:\\Users\\ZHJ\\Pictures\\Saved Pictures\\63957_1466095_610157.jpg"
     bg_image = "E:\\JetBrains\\workspace_2\\project1\\00XX\\006XWZdqgy1fltocpnnw4j30hs0bnn23.jpg"
     glass_iamge = r'E:\JetBrains\workspace_2\project1\00XX\006XWZdqgy1fmwz99tklej30j60asdjq.jpg'
     mouse_image = r'E:\JetBrains\workspace_2\project1\00XX\006XWZdqgy1fmwzaex216j30j60y2wo6.jpg'
-    bg_size = width, height = pygame.display.list_modes()[8]
+    bg_size = width, height = pygame.display.list_modes()[6]
     # bg_size = width, height = (800,600)
     screen = pygame.display.set_mode(bg_size, pygame.RESIZABLE)
     background = pygame.image.load(bg_image).convert_alpha()
@@ -329,7 +329,7 @@ def main():
     # 1秒内事件发生的次数，与target比较。根据check来判断小球是否停下
     motion = 0
     MYTIMER = USEREVENT + 1
-    pygame.time.set_timer(MYTIMER, 1000)  # 没隔1秒触发
+    pygame.time.set_timer(MYTIMER, 1000)  # 每隔1秒触发
 
     # 音乐的参数初始化
     music_file = r'C:\Users\ZHJ\Music\a.mp3'
